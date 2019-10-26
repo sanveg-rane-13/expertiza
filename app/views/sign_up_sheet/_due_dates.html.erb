@@ -23,7 +23,7 @@
         <td><%= text_field :due_date, (topic_id.to_s + '_submission_' + review_round.to_s + '_due_date').to_s, size: 20, value: check_topic_due_date_value(assignment_submission_due_dates, topic_id, 1, review_round), class: 'datetimepicker', onfocusout: (i != 0 && review_round == 1) ? "javascript:populateDueDates(#{topic_id}, #{review_rounds})" : nil %></td>
         <td><%= text_field :due_date, (topic_id.to_s + '_review_' + review_round.to_s + '_due_date').to_s, size: 20, value: check_topic_due_date_value(assignment_review_due_dates, topic_id, 2, review_round), class: 'datetimepicker' %></td>
       <%end%>
-      <td><%= text_field :topic_due_date, (topic_id.to_s + '_drop_topic_due_date').to_s, size: 20, value: get_drop_topic_deadline(@assignment.id, topic_id), class: 'datetimepicker', onfocusout: (i != 0 && review_round == 1) ? "javascript:populateDueDates(#{topic_id}, #{review_rounds})" : nil %></td>
+      <td><%= text_field :due_date, (topic_id.to_s + '_drop_topic_due_date').to_s, size: 20, value: get_drop_topic_deadline(@assignment.id, topic_id), class: 'datetimepicker', onfocusout: (i != 0 && review_round == 1) ? "javascript:populateDueDates(#{topic_id}, #{review_rounds})" : nil %></td>
     </tr>
   <% end %>
 </table>
