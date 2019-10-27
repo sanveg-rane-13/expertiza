@@ -335,8 +335,6 @@ class SignUpSheetController < ApplicationController
     review_rounds = assignment.num_review_rounds
     topics.each_with_index do |topic, index|
       for i in 1..review_rounds
-        # modify the topic deadline (add/update)
-        TopicDueDate.modify_drop_deadline(topic, DateTime.parse(due_dates[topics[index].id.to_s + '_drop_topic_due_date']).strftime("%Y-%m-%d %H:%M"))
         @topic_submission_due_date = due_dates[topics[index].id.to_s + '_submission_' + i.to_s + '_due_date']
         @topic_review_due_date = due_dates[topics[index].id.to_s + '_review_' + i.to_s + '_due_date']
         @assignment_submission_due_date = DateTime.parse(@assignment_submission_due_dates[i - 1].due_at.to_s).strftime("%Y-%m-%d %H:%M")
@@ -375,6 +373,12 @@ class SignUpSheetController < ApplicationController
           end
         end
       end
+    end
+    
+    # if drop topic deadline is set or updated by user then save it
+    drop_topic_deadline = due_dates[topics[index].id.to_s + "_drop_topic_due_date"]
+    if !drop_topic_deadline.nil? && !drop_topic_deadline.empty?
+      TopicDueDate.modify_drop_deadline(topic, DateTime.parse(drop_topic_deadline).strftime("%Y-%m-%d %H:%M"))
     end
     redirect_to_assignment_edit(params[:assignment_id])
   end
