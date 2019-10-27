@@ -5,7 +5,7 @@ class TopicDueDate < DueDate
   # adds a new deadline if not present,
   # updates the date if already present
   def self.modify_drop_deadline(topic, drop_topic_date)
-    # can create constants for all deadline type and use those when required
+    # can create constants for all deadline types and use those when required
     deadline_type_id = DeadlineType.find_by_name("drop_topic").id
     topic_due_date = TopicDueDate.where(parent_id: topic.id, deadline_type_id: deadline_type_id).first rescue nil
     if topic_due_date.nil?
