@@ -373,12 +373,11 @@ class SignUpSheetController < ApplicationController
           end
         end
       end
-    end
-    
-    # if drop topic deadline is set or updated by user then save it
-    drop_topic_deadline = due_dates[topics[index].id.to_s + "_drop_topic_due_date"]
-    if !drop_topic_deadline.nil? && !drop_topic_deadline.empty?
-      TopicDueDate.modify_drop_deadline(topic, DateTime.parse(drop_topic_deadline).strftime("%Y-%m-%d %H:%M"))
+      # if drop topic deadline is set or updated by user then save it
+      drop_topic_deadline = due_dates[topics[index].id.to_s + "_drop_topic_due_date"]
+      if !drop_topic_deadline.nil? && !drop_topic_deadline.empty?
+        TopicDueDate.modify_drop_deadline(topic, DateTime.parse(drop_topic_deadline).strftime("%Y-%m-%d %H:%M"))
+      end
     end
     redirect_to_assignment_edit(params[:assignment_id])
   end
