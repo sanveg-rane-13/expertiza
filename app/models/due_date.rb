@@ -91,8 +91,8 @@ class DueDate < ActiveRecord::Base
     next_due_date
   end
 
-  # Retrive Drop topic deadline for particular topic for staggered deadline assignments
-  def self.get_drop_topic_deadline(assignment_id, topic_id)
+  # get deadline to drop a topic
+  def self.get_deadline_to_drop_topic(assignment_id, topic_id)
     # use the drop topic deadline set on the topic
     drop_topic_deadline = DueDate.where(parent_id: topic_id,
                                         deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,

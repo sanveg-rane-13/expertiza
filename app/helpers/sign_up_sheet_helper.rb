@@ -72,7 +72,7 @@ module SignUpSheetHelper
     html.html_safe
   end
 
-  # Retrive Drop topic deadline for particular topic for staggered deadline assignments
+  # Retrive drop topic deadline if set on a topic
   def get_drop_topic_deadline(assignment_id, topic_id)
     drop_topic_deadline = DueDate.where(parent_id: topic_id,
                                         deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,

@@ -84,4 +84,8 @@ class SignedUpTeam < ActiveRecord::Base
       signed_up_teams.first.topic_id
     end
   end
+
+  def self.find_waitlisted_teams_for_topic(topic_id)
+    SignedUpTeam.where(is_waitlisted: 1, topic_id: topic_id)
+  end
 end
