@@ -17,10 +17,12 @@ class MailWorker
     assignment = Assignment.find(self.assignment_id)
     participant_mails = find_participant_emails
 
-    if %w[drop_one_member_topics drop_outstanding_reviews compare_files_with_simicheck].include?(self.deadline_type)
+    if %w[drop_one_member_topics drop_outstanding_reviews compare_files_with_simicheck drop_topic].include?(self.deadline_type)
       drop_one_member_topics if self.deadline_type == "drop_outstanding_reviews" && assignment.team_assignment
       drop_outstanding_reviews if self.deadline_type == "drop_outstanding_reviews"
       perform_simicheck_comparisons(self.assignment_id) if self.deadline_type == "compare_files_with_simicheck"
+      topic_id = assignment_id
+      Waitlist.drop_teams_waitlisted_for_topic(topic_id) if self.deadline_type == "drop_topic"
     else
       # Can we rename deadline_type(metareview) to "teammate review". If, yes then we donot need this if clause below!
       deadlineText = if self.deadline_type == "metareview"
