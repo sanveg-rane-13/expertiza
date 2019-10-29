@@ -29,33 +29,4 @@ module DeadlineHelper
     topic_deadline.round = due_date.round
     topic_deadline.save
   end
-
-  # This method either adds a new job to the queue or deletes
-  # an existing job and replaces it with a new one
-  def modify_delayed_job(topic, delayed_job_id, job_present)
-    if job_present == false
-      min_left = topic.due_at - Time.now
-      delayed_job_id = add_job_to_queue(min_left, topic.id, "drop_topic", topic.due_at)
-      delayed_job_id
-    else
-      remove_job_from_queue(delayed_job_id)
-      min_left = topic.due_at - Time.now
-      delayed_job_id = add_job_to_queue(min_left, topic.id, "drop_topic", topic.due_at)
-      delayed_job_id
-    end
-  end
-
-  def add_job_to_queue(min_left, topic_id, deadline_type, due_at)
-    delayed_job_id = MailWorker.perform_in(min_left * 60, topic_id, deadline_type, due_at)
-    return delayed_job_id
-  end
-
-  def remove_job_from_queue(job_id)
-    queue = Sidekiq::ScheduledSet.new
-    queue.each do |job|
-      current_job_id = job.args.first
-      job.delete if job_id == current_job_id
-    end
-  end
-
 end
