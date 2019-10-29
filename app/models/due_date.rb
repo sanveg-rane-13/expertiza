@@ -90,4 +90,37 @@ class DueDate < ActiveRecord::Base
     end
     next_due_date
   end
+
+  # get deadline to drop a topic
+  def self.get_deadline_to_drop_topic(assignment_id, topic_id)
+    # use the drop topic deadline set on the topic
+    drop_topic_deadline = DueDate.where(parent_id: topic_id,
+                                        deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
+                                        type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
+
+    # else use the drop topic deadline set on the assignment
+    if drop_topic_deadline.nil?
+      drop_topic_deadline = DueDate.where(parent_id: assignment_id,
+                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
+                                          type: DeadlineHelper::ASSNT_DEADLINE_TYPE).first rescue nil
+    end
+
+    # if drop topic deadline is not set on assignment use the topic's first submission deadline
+    if drop_topic_deadline.nil?
+      drop_topic_deadline = DueDate.where(parent_id: topic_id,
+                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
+                                          round: 1,
+                                          type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
+    end
+
+    # if specific topic submission date is not set use the assignment's first submission date
+    if drop_topic_deadline.nil?
+      drop_topic_deadline = DueDate.where(parent_id: topic_id,
+                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
+                                          round: 1,
+                                          type: DeadlineHelper::ASSNT_DEADLINE_TYPE).first rescue nil
+    end
+
+    drop_topic_deadline.nil? ? nil : drop_topic_deadline.due_at
+  end
 end

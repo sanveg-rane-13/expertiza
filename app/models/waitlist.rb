@@ -9,4 +9,9 @@ class Waitlist < ActiveRecord::Base
       end
     end
   end
+
+  # remove waitlisted teams for a particular topic
+  def self.drop_teams_waitlisted_for_topic(topic_id)
+    waitlisted_teams = SignedUpTeam.find_waitlisted_teams_for_topic(topic_id).destroy_all
+  end
 end
