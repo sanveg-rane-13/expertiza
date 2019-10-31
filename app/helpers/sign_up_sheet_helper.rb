@@ -78,6 +78,6 @@ module SignUpSheetHelper
                                         deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
                                         type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
 
-    drop_topic_deadline.nil? ? nil : DateTime.parse(drop_topic_deadline.due_at.to_s).strftime("%Y-%m-%d %H:%M:%S")
+    drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil? ? nil : DateTime.parse(drop_topic_deadline.due_at.to_s).strftime("%Y-%m-%d %H:%M:%S")
   end
 end

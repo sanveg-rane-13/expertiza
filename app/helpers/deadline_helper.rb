@@ -11,6 +11,8 @@ module DeadlineHelper
   TOPIC_DEADLINE_TYPE = 'TopicDueDate'
   ASSNT_DEADLINE_TYPE = 'AssignmentDueDate'
 
+  DATE_FORMATTER = '%a, %d %b %Y %H:%M:%S'
+
   # Creates a new topic deadline for topic specified by topic_id.
   # The deadline itself is specified by due_date object which contains several values which specify
   # type { submission deadline, metareview deadline, etc.} a set of other parameters that
