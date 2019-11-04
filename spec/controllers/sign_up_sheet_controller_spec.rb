@@ -9,6 +9,7 @@ describe SignUpSheetController do
   let(:team) { build(:assignment_team, id: 1, assignment: assignment) }
   let(:due_date) { build(:assignment_due_date, deadline_type_id: 1) }
   let(:due_date2) { build(:assignment_due_date, deadline_type_id: 2) }
+  let(:due_date3) { build(:assignment_due_date, deadline_type_id: 6) }
   let(:bid) { Bid.new(topic_id: 1, priority: 1) }
 
   before(:each) do
@@ -412,7 +413,7 @@ describe SignUpSheetController do
       it 'creates a new topic_due_date record and redirects to assignment#edit page' do
         assignment.due_dates = [due_date, due_date2]
         allow(SignUpTopic).to receive(:where).with(assignment_id: '1').and_return([topic])
-        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: assignment.due_dates[0].due_at.to_s)
+        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: '2019-11-05 01:31:14 -0500')
         allow(AssignmentDueDate).to receive(:where).with(parent_id: 1).and_return([due_date])
         allow(DeadlineType).to receive(:find_by_name).with(any_args).and_return(double('DeadlineType', id: 1))
         allow(TopicDueDate).to receive(:create).with(any_args).and_return(double('TopicDueDate'))
@@ -429,7 +430,7 @@ describe SignUpSheetController do
       it 'updates the existing topic_due_date record and redirects to assignment#edit page' do
         assignment.due_dates = [due_date, due_date2]
         allow(SignUpTopic).to receive(:where).with(assignment_id: '1').and_return([topic])
-        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: assignment.due_dates[0].due_at.to_s)
+        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: '2019-11-05 01:31:14 -0500')
         allow(AssignmentDueDate).to receive(:where).with(parent_id: 1).and_return([due_date])
         allow(DeadlineType).to receive(:find_by_name).with(any_args).and_return(double('DeadlineType', id: 1))
         topic_due_date = double('TopicDueDate')
