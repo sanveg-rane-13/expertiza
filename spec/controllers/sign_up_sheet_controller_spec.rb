@@ -413,7 +413,6 @@ describe SignUpSheetController do
       it 'creates a new topic_due_date record and redirects to assignment#edit page' do
         assignment.due_dates = [due_date, due_date2]
         allow(SignUpTopic).to receive(:where).with(assignment_id: '1').and_return([topic])
-        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: '2019-11-05 01:31:14 -0500')
         allow(AssignmentDueDate).to receive(:where).with(parent_id: 1).and_return([due_date])
         allow(DeadlineType).to receive(:find_by_name).with(any_args).and_return(double('DeadlineType', id: 1))
         allow(TopicDueDate).to receive(:create).with(any_args).and_return(double('TopicDueDate'))
@@ -430,7 +429,6 @@ describe SignUpSheetController do
       it 'updates the existing topic_due_date record and redirects to assignment#edit page' do
         assignment.due_dates = [due_date, due_date2]
         allow(SignUpTopic).to receive(:where).with(assignment_id: '1').and_return([topic])
-        allow(TopicDueDate).to receive(:modify_drop_deadline).with(assignment_id: 1, topic: topic, drop_topic_input: '2019-11-05 01:31:14 -0500')
         allow(AssignmentDueDate).to receive(:where).with(parent_id: 1).and_return([due_date])
         allow(DeadlineType).to receive(:find_by_name).with(any_args).and_return(double('DeadlineType', id: 1))
         topic_due_date = double('TopicDueDate')
