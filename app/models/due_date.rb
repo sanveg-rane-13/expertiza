@@ -129,7 +129,6 @@ class DueDate < ActiveRecord::Base
     if (topic_drop_due_at.nil? || (!asgnmt_submission_due_at.nil? && topic_drop_due_at.utc > asgnmt_submission_due_at.utc))
       topic_drop_due_at = asgnmt_submission_due_at
     end
-
     return topic_drop_due_at
   end
 end
