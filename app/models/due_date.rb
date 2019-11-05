@@ -102,7 +102,7 @@ class DueDate < ActiveRecord::Base
     if drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil?
       drop_topic_deadline = DueDate.where(parent_id: assignment_id,
                                           deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
-                                          type: DeadlineHelper::ASSNT_DEADLINE_TYPE).first rescue nil
+                                          type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
     end
 
     #  if drop topic deadline is not set on assignment use the topic's first submission deadline
@@ -118,7 +118,7 @@ class DueDate < ActiveRecord::Base
       drop_topic_deadline = DueDate.where(parent_id: assignment_id,
                                           deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
                                           round: 1,
-                                          type: DeadlineHelper::ASSNT_DEADLINE_TYPE).first rescue nil
+                                          type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
     end
 
     drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil? ? nil : drop_topic_deadline.due_at.to_datetime

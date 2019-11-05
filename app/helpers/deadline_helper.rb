@@ -9,7 +9,7 @@ module DeadlineHelper
   DEADLINE_TYPE_TEAM_FORMATION = 8
 
   TOPIC_DEADLINE_TYPE = 'TopicDueDate'
-  ASSNT_DEADLINE_TYPE = 'AssignmentDueDate'
+  ASSIGNMENT_DEADLINE_TYPE = 'AssignmentDueDate'
 
   DATE_FORMATTER = '%a, %d %b %Y %H:%M:%S'
 
