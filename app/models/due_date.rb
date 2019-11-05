@@ -91,36 +91,45 @@ class DueDate < ActiveRecord::Base
     next_due_date
   end
 
-  # get deadline to drop a topic
+  # fetch the correct drop topic deadline for the topic
   def self.get_deadline_to_drop_topic(assignment_id, topic_id)
-    # use the drop topic deadline set on the topic
-    drop_topic_deadline = DueDate.where(parent_id: topic_id,
+    # get the drop deadline set on the topic
+    topic_drop_deadline = DueDate.where(parent_id: topic_id,
                                         deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
                                         type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
+    topic_drop_due_at = (topic_drop_deadline.nil? || topic_drop_deadline.due_at.nil?) ? nil : topic_drop_deadline.due_at.to_datetime
+    
+    # get the topic submission due date and check if it is earlier that the drop topic deadline
+    topic_submission_deadline = DueDate.where(parent_id: assignment_id,
+                                              deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
+                                              type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
+    topic_submission_due_at =  (topic_submission_deadline.nil? || topic_submission_deadline.due_at.nil?) ? nil : topic_submission_deadline.due_at.to_datetime
 
-    # else use the drop topic deadline set on the assignment
-    if drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil?
-      drop_topic_deadline = DueDate.where(parent_id: assignment_id,
-                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
-                                          type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
+    if (topic_drop_due_at.nil? || (!topic_submission_due_at.nil? && topic_drop_due_at.utc > topic_submission_due_at.utc))
+      topic_drop_due_at = topic_submission_due_at
     end
 
-    #  if drop topic deadline is not set on assignment use the topic's first submission deadline
-    if drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil?
-      drop_topic_deadline = DueDate.where(parent_id: topic_id,
-                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
-                                          round: 1,
-                                          type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
+    # get the drop topic deadline set on assignment and check
+    asgnmt_topic_drop_deadline = DueDate.where(parent_id: topic_id,
+                                              deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
+                                              round: 1,
+                                              type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
+    asgnmt_topic_drop_due_at = (asgnmt_topic_drop_deadline.nil? || asgnmt_topic_drop_deadline.due_at.nil?) ? nil : asgnmt_topic_drop_deadline.due_at.to_datetime
+
+    if (topic_drop_due_at.nil? || (!topic_submission_due_at.nil? && topic_drop_due_at.utc > asgnmt_topic_drop_due_at.utc))
+      topic_drop_due_at = asgnmt_topic_drop_due_at
     end
 
-    # if specific topic submission date is not set use the assignment's first submission date
-    if drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil?
-      drop_topic_deadline = DueDate.where(parent_id: assignment_id,
-                                          deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
-                                          round: 1,
-                                          type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
+    asgnmt_submission_deadline = DueDate.where(parent_id: assignment_id,
+                                        deadline_type_id: DeadlineHelper::DEADLINE_TYPE_SUBMISSION,
+                                        round: 1,
+                                        type: DeadlineHelper::ASSIGNMENT_DEADLINE_TYPE).first rescue nil
+    asgnmt_submission_due_at = (asgnmt_submission_deadline.nil? || asgnmt_submission_deadline.due_at.nil?) ? nil : asgnmt_submission_deadline.due_at.to_datetime
+
+    if (topic_drop_due_at.nil? || (!asgnmt_submission_due_at.nil? && topic_drop_due_at.utc > asgnmt_submission_due_at.utc))
+      topic_drop_due_at = asgnmt_submission_due_at
     end
 
-    drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil? ? nil : drop_topic_deadline.due_at.to_datetime
+    return topic_drop_due_at
   end
 end

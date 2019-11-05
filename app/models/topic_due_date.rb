@@ -48,9 +48,18 @@ class TopicDueDate < DueDate
     end
   end
 
-  # check if drop topic is set by user else get the date from assignment
+  # check the user inputed date and return the accurate deadline for dropping topics
   def self.get_drop_topic_deadline_date(assignment_id, topic_id, drop_topic_input)
-    drop_topic_date = (drop_topic_input.nil? || drop_topic_input.blank?) ? DueDate.get_deadline_to_drop_topic(assignment_id, topic_id) : DateTime.parse(drop_topic_input)
+    expected_drop_deadline_date = DueDate.get_deadline_to_drop_topic(assignment_id, topic_id)
+
+    if (drop_topic_input.nil? || drop_topic_input.blank?)
+      return expected_drop_deadline_date
+    end
+
+    drop_topic_date = DateTime.parse(drop_topic_input)
+
+    # if user sets drop topic deadline ahead of submission date, use submission date
+    return (drop_topic_date.utc > expected_drop_deadline_date.utc) ? expected_drop_deadline_date : drop_topic_date
   end
 
   # This method either adds a new job to the queue or deletes
