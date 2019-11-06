@@ -4,7 +4,7 @@ class TopicDueDate < DueDate
 
   # adds a new deadline if not present,
   # updates the date if already present
-  def self.modify_drop_deadline(assignment_id, topic, drop_topic_input)
+  def self.upsert_drop_deadline_job(assignment_id, topic, drop_topic_input)
     # can create constants for all deadline types and use those when required
     deadline_type_id = DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC
     drop_topic_date = TopicDueDate.where(parent_id: topic.id, deadline_type_id: deadline_type_id).first rescue nil
@@ -33,7 +33,7 @@ class TopicDueDate < DueDate
       elsif drop_topic_date.due_at.nil? && !(drop_topic_input.nil? || drop_topic_input.blank?)
         # if drop topic deadline is entered first time
         due_at = calc_drop_topic_date
-      elsif !drop_topic_date.due_at.nil? && drop_topic_date.due_at.to_datetime.strftime(DeadlineHelper::DATE_FORMATTER) != calc_drop_topic_date.strftime(DeadlineHelper::DATE_FORMATTER)
+      elsif !drop_topic_date.due_at.nil? && drop_topic_date.due_at.to_datetime.strftime(DeadlineHelper::DATE_FORMATTER_DROP_DEADLINE) != calc_drop_topic_date.strftime(DeadlineHelper::DATE_FORMATTER_DROP_DEADLINE)
         # if drop topic deadline is updated
         due_at = calc_drop_topic_date
       else
@@ -48,11 +48,12 @@ class TopicDueDate < DueDate
     end
   end
 
-  # check the user inputed date and return the accurate deadline for dropping topics
+  # check the user input date and return the accurate deadline for dropping topics
+  private
   def self.get_drop_topic_deadline_date(assignment_id, topic_id, drop_topic_input)
     expected_drop_deadline_date = DueDate.get_deadline_to_drop_topic(assignment_id, topic_id)
 
-    if (drop_topic_input.nil? || drop_topic_input.blank?)
+    if drop_topic_input.nil? || drop_topic_input.blank?
       return expected_drop_deadline_date
     end
 
@@ -62,8 +63,9 @@ class TopicDueDate < DueDate
     return (drop_topic_date.utc > expected_drop_deadline_date.utc) ? expected_drop_deadline_date : drop_topic_date
   end
 
-  # This method either adds a new job to the queue or deletes
+  # this method either adds a new job to the queue or deletes
   # an existing job and replaces it with a new one
+  private
   def self.modify_delayed_job(topic_id, drop_topic_date, delayed_job_id, job_present)
     if job_present
       remove_job_from_queue(delayed_job_id)
@@ -73,16 +75,19 @@ class TopicDueDate < DueDate
     return add_job_to_queue(mins_left, topic_id, "drop_topic", drop_topic_date)
   end
 
+  private
   def self.calculate_mins_left(drop_topic_date)
     curr_time = DateTime.now
-    time_in_min = ((curr_time - drop_topic_date) * 24 * 60).to_i
+    ((curr_time - drop_topic_date) * 24 * 60).to_i
   end
 
+  private
   def self.add_job_to_queue(min_left, topic_id, deadline_type, due_at)
     delayed_job_id = MailWorker.perform_in(min_left * 60, topic_id, deadline_type, due_at)
     return delayed_job_id
   end
 
+  private
   def self.remove_job_from_queue(job_id)
     queue = Sidekiq::ScheduledSet.new
     queue.each do |job|

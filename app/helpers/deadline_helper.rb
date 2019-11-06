@@ -11,7 +11,8 @@ module DeadlineHelper
   TOPIC_DEADLINE_TYPE = 'TopicDueDate'
   ASSIGNMENT_DEADLINE_TYPE = 'AssignmentDueDate'
 
-  DATE_FORMATTER = '%a, %d %b %Y %H:%M:%S'
+  DATE_FORMATTER_DROP_DEADLINE = '%a, %d %b %Y %H:%M:%S'
+  DATE_FORMATTER = '%Y-%m-%d %H:%M:%S'
 
   # Creates a new topic deadline for topic specified by topic_id.
   # The deadline itself is specified by due_date object which contains several values which specify

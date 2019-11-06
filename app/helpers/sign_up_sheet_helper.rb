@@ -72,12 +72,12 @@ module SignUpSheetHelper
     html.html_safe
   end
 
-  # Retrive drop topic deadline if set on a topic
+  # Retrieve drop topic deadline if set on a topic
   def get_drop_topic_deadline(assignment_id, topic_id)
     drop_topic_deadline = DueDate.where(parent_id: topic_id,
                                         deadline_type_id: DeadlineHelper::DEADLINE_TYPE_DROP_TOPIC,
                                         type: DeadlineHelper::TOPIC_DEADLINE_TYPE).first rescue nil
 
-    drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil? ? nil : DateTime.parse(drop_topic_deadline.due_at.to_s).strftime("%Y-%m-%d %H:%M:%S")
+    drop_topic_deadline.nil? || drop_topic_deadline.due_at.nil? ? nil : DateTime.parse(drop_topic_deadline.due_at.to_s).strftime(DeadlineHelper::DATE_FORMATTER)
   end
 end
