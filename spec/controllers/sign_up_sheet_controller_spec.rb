@@ -416,7 +416,7 @@ describe SignUpSheetController do
         allow(AssignmentDueDate).to receive(:where).with(parent_id: 1).and_return([due_date])
         allow(DeadlineType).to receive(:find_by_name).with(any_args).and_return(double('DeadlineType', id: 1))
         allow(TopicDueDate).to receive(:create).with(any_args).and_return(double('TopicDueDate'))
-        allow(TopicDueDate).to receive(:upsert_drop_deadline_job)
+        allow(TopicDueDate).to receive(:upsert_drop_deadline_job).with(any_args)
 
         params = {
           assignment_id: 1,
@@ -436,7 +436,7 @@ describe SignUpSheetController do
         topic_due_date = double('TopicDueDate')
         allow(TopicDueDate).to receive(:where).with(parent_id: 1, deadline_type_id: 1, round: 1).and_return([topic_due_date])        
         allow(topic_due_date).to receive(:update_attributes).with(any_args).and_return(topic_due_date)
-        allow(TopicDueDate).to receive(:upsert_drop_deadline_job)
+        allow(TopicDueDate).to receive(:upsert_drop_deadline_job).with(any_args)
 
         params = {
           assignment_id: 1,
